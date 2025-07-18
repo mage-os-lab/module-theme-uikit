@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:MageOS_Theme:etc/uikit_whitelist.xsd">
+    <paths>
+        <path name="mage-os_app" xsi:type="string" >app/design/frontend/Mage-OS/UIkit</path>
+        <path name="mage-os_vendor" xsi:type="string" >vendor/mage-os/theme-frontend-uikit</path>
+    </paths>
+    <terms>
+        <term name="button" xsi:type="string" >uk-button</term>
+    </terms>
+</config>

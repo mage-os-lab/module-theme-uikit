@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Deploy\Service\DeployPackage">
+        <plugin name="mageos_deploy_svg_assets_for_compilation" type="MageOS\UIkitTheme\Plugin\Framework\Deploy\InsertSvgAssetsOnStaticFilesCompilation" sortOrder="1" />
+    </type>
+    <type name="Magento\Deploy\Package\Package">
+        <arguments>
+            <argument name="postProcessors" xsi:type="array">
+                <item name="uikitParser" xsi:type="object">MageOS\UIkitTheme\Deploy\Package\Processor\PostProcessor\CssProcessor</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="MageOS\UIkitTheme\Model\Config\Reader">
+        <arguments>
+            <argument name="converter" xsi:type="object">MageOS\UIkitTheme\Model\Config\Converter</argument>
+            <argument name="fileName" xsi:type="string">uikit_whitelist.xml</argument>
+            <argument name="schemaLocator" xsi:type="object">MageOS\UIkitTheme\Model\Config\SchemaLocator</argument>
+            <argument name="fileResolver" xsi:type="object">MageOS\UIkitTheme\Model\Config\FileResolver</argument>
+        </arguments>
+    </type>
+    <type name="MageOS\UIkitTheme\Model\Config\Data">
+        <arguments>
+            <argument name="reader" xsi:type="object">MageOS\UIkitTheme\Model\Config\Reader\Proxy</argument>
+            <argument name="cacheId" xsi:type="string">uikit-whitelist_config</argument>
+        </arguments>
+    </type>
+</config>

@@ -1,0 +1,27 @@
+{
+    "name": "mage-os/module-theme-uikit",
+    "description": "Utilities for the Mage-OS/Magento UIkit theme",
+    "type": "magento2-module",
+    "license": [
+        "MIT"
+    ],
+    "require": {
+        "php": "^8.1",
+        "sabberworm/php-css-parser": "^8.4",
+        "matthiasmullie/minify": "^2.5"
+    },
+    "authors": [
+        {
+            "name": "Davide Lunardon",
+            "email": "dadolun@gmail.com"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "MageOS\\UIkitTheme\\": ""
+        }
+    }
+}

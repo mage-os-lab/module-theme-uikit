@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="head.additional">
+            <block class="MageOS\UIkitTheme\Block\Head\Preload" name="head.fontpreload">
+                <arguments>
+                    <argument name="link_template" xsi:type="string"><![CDATA[<link rel="preload" href=":path:" :attributes: as="font" />]]></argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

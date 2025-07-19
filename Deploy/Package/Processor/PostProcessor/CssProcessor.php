@@ -87,7 +87,6 @@ class CssProcessor implements ProcessorInterface
             $cssPath = $root . '/pub/static/' . $targetPath . '/css/' . $base . '.css';
             if ($this->file->isExists($cssPath)) {
                 $this->purgeCss($cssPath, $usedClasses);
-                (new Minify\CSS($cssPath))->minify($cssPath);
             }
         }
     }
@@ -109,7 +108,9 @@ class CssProcessor implements ProcessorInterface
                 if (preg_match_all('/class=["\']([^"\']+)["\']/', file_get_contents($file->getPathname()), $m)) {
                     foreach ($m[1] as $list) {
                         foreach (preg_split('/\s+/', $list) as $cls) {
-                            if (str_starts_with($cls, 'uk-')) $found[$cls] = true;
+                            if (str_starts_with($cls, 'uk-')) {
+                                $found[$cls] = true;
+                            }
                         }
                     }
                 }
@@ -132,12 +133,6 @@ class CssProcessor implements ProcessorInterface
         $this->filterCssList($doc, $used);
         $format  = OutputFormat::createCompact();
         $css = $doc->render($format);
-        $css = preg_replace_callback('/[^\x00-\x7F]/u', function ($matches) {
-            $char = $matches[0];
-            $utf16 = mb_convert_encoding($char, 'UTF-16BE', 'UTF-8');
-            $hex = strtoupper(bin2hex($utf16));
-            return '\\' . ltrim($hex, '0') . ' ';
-        }, $css);
         file_put_contents($file, $css);
     }
 
@@ -154,33 +149,39 @@ class CssProcessor implements ProcessorInterface
                     continue;
                 }
                 $selectors = $rule->getSelectors();
-                $newSelectors = [];
+                $selectorsToKeep = [];
+                $keepRule = false;
                 foreach ($selectors as $sel) {
                     $selectorString = $sel->getSelector();
                     if (preg_match_all('/\.uk-[\w-]+/', $selectorString, $matches)) {
-                        $allUsed = true;
+                        if (empty($matches[1])) {
+                            $keepRule = false;
+                        } else {
+                            $keepRule = true;
+                        }
                         foreach ($matches[0] as $dotClass) {
                             $className = substr($dotClass, 1);
-                            if (!in_array($className, $used, true)) {
-                                $allUsed = false;
+                            if (in_array($className, $used, true)) {
+                                $keepRule = true;
+                                $selectorsToKeep[] = $sel;
                                 break;
                             }
                         }
-                        if ($allUsed) {
-                            $newSelectors[] = $sel;
-                        }
                     } else {
-                        $newSelectors[] = $sel;
+                        $selectorsToKeep = $selectors;
+                        $keepRule = true;
                     }
                 }
-                if (empty($newSelectors)) {
-                    $list->remove($rule);
+                if ($keepRule) {
+                    $rule->setSelectors($selectorsToKeep);
                 } else {
-                    $rule->setSelectors($newSelectors);
+                    $list->remove($rule);
                 }
             } elseif ($rule instanceof AtRuleBlockList) {
                 $this->filterCssList($rule, $used);
-                if (!$rule->getContents()) $list->remove($rule);
+                if (!$rule->getContents()) {
+                    $list->remove($rule);
+                }
             }
         }
     }

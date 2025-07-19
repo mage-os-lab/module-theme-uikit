@@ -4,7 +4,4 @@
         <path name="mage-os_app" xsi:type="string" >app/design/frontend/Mage-OS/UIkit</path>
         <path name="mage-os_vendor" xsi:type="string" >vendor/mage-os/theme-frontend-uikit</path>
     </paths>
-    <terms>
-        <term name="button" xsi:type="string" >uk-button</term>
-    </terms>
 </config>

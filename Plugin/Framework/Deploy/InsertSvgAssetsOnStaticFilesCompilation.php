@@ -10,13 +10,13 @@ use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;
 use Magento\Theme\Model\ResourceModel\Theme\CollectionFactory as ThemeCollectionFactory;
 use MageOS\UIkitTheme\Helper\ThemeResolver;
+use Magento\Framework\Component\ComponentRegistrar;
 
 class InsertSvgAssetsOnStaticFilesCompilation
 {
 
     const ICONS_EXTENSION = 'svg';
     const UIKIT_THEME_CODE = 'MageOS/UIkit';
-    const PATH_COMPOSER = "/vendor/";
     const PATH_NON_COMPOSER = "/app/design/frontend/";
 
     /**
@@ -45,6 +45,11 @@ class InsertSvgAssetsOnStaticFilesCompilation
     protected ThemeResolver $themeResolver;
 
     /**
+     * @var ComponentRegistrar
+     */
+    protected ComponentRegistrar $componentRegistrar;
+
+    /**
      * @param DeployStaticFile $deployStaticFile
      * @param Filesystem\DirectoryList $dir
      * @param Filesystem $filesystem
@@ -57,7 +62,8 @@ class InsertSvgAssetsOnStaticFilesCompilation
         Filesystem\DirectoryList $dir,
         Filesystem $filesystem,
         ThemeCollectionFactory $themeCollectionFactory,
-        ThemeResolver $themeResolver
+        ThemeResolver $themeResolver,
+        ComponentRegistrar $componentRegistrar
     )
     {
         $this->deployStaticFile = $deployStaticFile;
@@ -65,6 +71,7 @@ class InsertSvgAssetsOnStaticFilesCompilation
         $this->tmpDir = $filesystem->getDirectoryWrite(DirectoryList::TMP_MATERIALIZATION_DIR);
         $this->themeCollectionFactory = $themeCollectionFactory;
         $this->themeResolver = $themeResolver;
+        $this->componentRegistrar = $componentRegistrar;
     }
 
     /**
@@ -93,7 +100,8 @@ class InsertSvgAssetsOnStaticFilesCompilation
                     if ($currentTheme->getData('is_uikit')) {
                         $path = $this->dir->getRoot() . self::PATH_NON_COMPOSER . $currentTheme->getThemePath() . '/';
                         if (!file_exists($path)) {
-                            $path = $this->dir->getRoot() . self::PATH_COMPOSER . $currentTheme->getThemePackageCode() . '/' . $currentTheme->getThemeCode() . '/';
+                            $registeredThemes = $this->componentRegistrar->getPaths(ComponentRegistrar::THEME);
+                            $path = $registeredThemes[$currentTheme->getFullPath()] . '/';
                         }
                         $this->tmpDir->writeFile(
                             $package->getPath() . '/' . $fileId,

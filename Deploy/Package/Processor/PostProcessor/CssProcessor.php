@@ -19,6 +19,7 @@ use Magento\Theme\Model\ResourceModel\Theme\CollectionFactory as ThemeCollection
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use MageOS\UIkitTheme\Model\UIkitWhitelist;
+use Magento\Framework\Component\ComponentRegistrar;
 
 /**
  * Removes every UIkit CSS rule that is NOT referenced in any template found into phtml/xml/html
@@ -253,18 +254,25 @@ class CssProcessor implements ProcessorInterface
     private ThemeResolver $themeResolver;
 
     /**
+     * @var ComponentRegistrar
+     */
+    private ComponentRegistrar $componentRegistrar;
+
+    /**
      * @param DirectoryList $directoryList
      * @param File $file
      * @param UIkitWhitelist $uikitWhitelist
      * @param ThemeCollectionFactory $themeCollectionFactory
      * @param ThemeResolver $themeResolver
+     * @param ComponentRegistrar $componentRegistrar
      */
     public function __construct(
         DirectoryList $directoryList,
         File $file,
         UIkitWhitelist $uikitWhitelist,
         ThemeCollectionFactory $themeCollectionFactory,
-        ThemeResolver $themeResolver
+        ThemeResolver $themeResolver,
+        ComponentRegistrar $componentRegistrar
     )
     {
         $this->directoryList = $directoryList;
@@ -272,6 +280,7 @@ class CssProcessor implements ProcessorInterface
         $this->uikitWhitelist = $uikitWhitelist;
         $this->themeCollectionFactory = $themeCollectionFactory;
         $this->themeResolver = $themeResolver;
+        $this->componentRegistrar = $componentRegistrar;
     }
 
     /**
@@ -410,7 +419,8 @@ class CssProcessor implements ProcessorInterface
             if ($theme->getData('is_uikit')) {
                 $path = $root . '/app/design/frontend/' . $theme->getThemePath() . '/';
                 if (!file_exists($path)) {
-                    $path = $root . '/vendor/' . $theme->getThemePackageCode() . '/' . $theme->getThemeCode() . '/';
+                    $registeredThemes = $this->componentRegistrar->getPaths(ComponentRegistrar::THEME);
+                    $path = $registeredThemes[$theme->getFullPath()] . '/';
                 }
                 $paths[] = $path;
             }

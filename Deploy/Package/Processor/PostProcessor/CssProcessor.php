@@ -420,7 +420,7 @@ class CssProcessor implements ProcessorInterface
                 $path = $root . '/app/design/frontend/' . $theme->getThemePath() . '/';
                 if (!file_exists($path)) {
                     $registeredThemes = $this->componentRegistrar->getPaths(ComponentRegistrar::THEME);
-                    $path = $registeredThemes[$theme->getFullPath()] . '/';
+                    $path = $registeredThemes['frontend' . '/' . $theme->getThemePath()] . '/';
                 }
                 $paths[] = $path;
             }

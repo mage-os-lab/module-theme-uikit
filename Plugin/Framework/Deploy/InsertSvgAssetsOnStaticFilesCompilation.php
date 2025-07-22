@@ -101,7 +101,7 @@ class InsertSvgAssetsOnStaticFilesCompilation
                         $path = $this->dir->getRoot() . self::PATH_NON_COMPOSER . $currentTheme->getThemePath() . '/';
                         if (!file_exists($path)) {
                             $registeredThemes = $this->componentRegistrar->getPaths(ComponentRegistrar::THEME);
-                            $path = $registeredThemes[$currentTheme->getFullPath()] . '/';
+                            $path = $registeredThemes['frontend' . '/' . $currentTheme->getThemePath()] . '/';
                         }
                         $this->tmpDir->writeFile(
                             $package->getPath() . '/' . $fileId,

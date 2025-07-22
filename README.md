@@ -1,6 +1,8 @@
 # MageOS UIkit Theme Module
 
-Set of utilities for the Mage-OS/Magento UIkit theme.
+**Set of utilities for the Mage-OS/Magento UIkit theme**
+
+See also [mage-os-lab/theme-frontend-uikit](https://github.com/mage-os-lab/theme-frontend-uikit)
 
 ---
 
@@ -82,6 +84,8 @@ composer require mage-os/module-theme-uikit
 ```
 bin/magento setup:upgrade
 ```
+
+Make sure to also install [mage-os-lab/theme-frontend-uikit](https://github.com/mage-os-lab/theme-frontend-uikit)
 
 ## Changelog
 

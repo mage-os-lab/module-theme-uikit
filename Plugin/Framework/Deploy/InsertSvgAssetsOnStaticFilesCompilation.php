@@ -8,14 +8,16 @@ use Magento\Deploy\Service\DeployStaticFile;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;
+use Magento\Theme\Model\ResourceModel\Theme\CollectionFactory as ThemeCollectionFactory;
+use MageOS\UIkitTheme\Helper\ThemeResolver;
 
 class InsertSvgAssetsOnStaticFilesCompilation
 {
 
     const ICONS_EXTENSION = 'svg';
-    const UIKIT_THEME_VENDOR_NAME = 'UIkit';
-    const PATH_COMPOSER = "/vendor/mage-os/module-theme-uikit/";
-    const PATH_NON_COMPOSER = "/app/design/frontend/Mage-OS/UIkit/";
+    const UIKIT_THEME_CODE = 'MageOS/UIkit';
+    const PATH_COMPOSER = "/vendor/";
+    const PATH_NON_COMPOSER = "/app/design/frontend/";
 
     /**
      * @var DeployStaticFile
@@ -33,21 +35,36 @@ class InsertSvgAssetsOnStaticFilesCompilation
     protected Filesystem\Directory\WriteInterface $tmpDir;
 
     /**
-     * InsertSvgAssetsOnStaticFilesCompilation constructor.
+     * @var ThemeCollectionFactory
+     */
+    protected ThemeCollectionFactory $themeCollectionFactory;
+
+    /**
+     * @var ThemeResolver
+     */
+    protected ThemeResolver $themeResolver;
+
+    /**
      * @param DeployStaticFile $deployStaticFile
      * @param Filesystem\DirectoryList $dir
      * @param Filesystem $filesystem
+     * @param ThemeCollectionFactory $themeCollectionFactory
+     * @param ThemeResolver $themeResolver
      * @throws FileSystemException
      */
     public function __construct(
         DeployStaticFile $deployStaticFile,
-        Filesystem\DirectoryList                 $dir,
-        Filesystem                               $filesystem
+        Filesystem\DirectoryList $dir,
+        Filesystem $filesystem,
+        ThemeCollectionFactory $themeCollectionFactory,
+        ThemeResolver $themeResolver
     )
     {
         $this->deployStaticFile = $deployStaticFile;
         $this->dir = $dir;
         $this->tmpDir = $filesystem->getDirectoryWrite(DirectoryList::TMP_MATERIALIZATION_DIR);
+        $this->themeCollectionFactory = $themeCollectionFactory;
+        $this->themeResolver = $themeResolver;
     }
 
     /**
@@ -65,23 +82,28 @@ class InsertSvgAssetsOnStaticFilesCompilation
         bool $skipLogging = false
     ): array
     {
+        $themeArrayList = $this->themeResolver->getThemeList($this->themeCollectionFactory->create()->getItems());
         foreach ($package->getFiles() as $file) {
             $fileId = $file->getDeployedFileId();
             $ext = strtolower(pathinfo($fileId, PATHINFO_EXTENSION));
             if ($ext === self::ICONS_EXTENSION) {
-                if (str_contains($file->getOrigPackage()->getTheme(), self::UIKIT_THEME_VENDOR_NAME)) {
-                    $path = $this->dir->getRoot() . self::PATH_COMPOSER;
-                    if (!file_exists($path)) {
-                        $path = $this->dir->getRoot() . self::PATH_NON_COMPOSER;
+
+                if (isset($themeArrayList[$file->getOrigPackage()->getTheme()])) {
+                    $currentTheme = $themeArrayList[$file->getOrigPackage()->getTheme()];
+                    if ($currentTheme->getData('is_uikit')) {
+                        $path = $this->dir->getRoot() . self::PATH_NON_COMPOSER . $currentTheme->getThemePath() . '/';
+                        if (!file_exists($path)) {
+                            $path = $this->dir->getRoot() . self::PATH_COMPOSER . $currentTheme->getThemePackageCode() . '/' . $currentTheme->getThemeCode() . '/';
+                        }
+                        $this->tmpDir->writeFile(
+                            $package->getPath() . '/' . $fileId,
+                            file_get_contents(
+                                $path .
+                                \Magento\Framework\UrlInterface::URL_TYPE_WEB . '/' .
+                                $file->getDeployedFileName()
+                            )
+                        );
                     }
-                    $this->tmpDir->writeFile(
-                        $package->getPath() . '/' . $fileId,
-                        file_get_contents(
-                            $path .
-                            \Magento\Framework\UrlInterface::URL_TYPE_WEB . '/' .
-                            $file->getDeployedFileName()
-                        )
-                    );
                 }
             }
         }

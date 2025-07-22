@@ -14,7 +14,8 @@ use Sabberworm\CSS\CSSList\CSSList;
 use Sabberworm\CSS\Parsing\SourceException;
 use Sabberworm\CSS\RuleSet\RuleSet;
 use Sabberworm\CSS\CSSList\AtRuleBlockList;
-use MatthiasMullie\Minify;
+use MageOS\UIkitTheme\Helper\ThemeResolver;
+use Magento\Theme\Model\ResourceModel\Theme\CollectionFactory as ThemeCollectionFactory;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use MageOS\UIkitTheme\Model\UIkitWhitelist;
@@ -25,7 +26,7 @@ use MageOS\UIkitTheme\Model\UIkitWhitelist;
  */
 class CssProcessor implements ProcessorInterface
 {
-    private $componentsWhitelist = [
+    private array $componentsWhitelist = [
         'uk-accordion' => [
             'terms' => [
                 'uk-accordion',
@@ -49,8 +50,7 @@ class CssProcessor implements ProcessorInterface
         ],
         'uk-countdown' => [
             'paths' => [
-                'app/design/frontend/Mage-OS/UIkit/web/js/uikit/components/countdown.js',
-                'vendor/mage-os/theme-frontend-uikit/web/js/uikit/components/countdown.js',
+                'web/js/uikit/components/countdown.js',
             ],
             'terms' => [
                 'uk-countdown'
@@ -83,8 +83,7 @@ class CssProcessor implements ProcessorInterface
         ],
         'uk-filter' => [
             'paths' => [
-                'app/design/frontend/Mage-OS/UIkit/web/js/uikit/components/filter.js',
-                'vendor/mage-os/theme-frontend-uikit/web/js/uikit/components/filter.js',
+                'web/js/uikit/components/filter.js',
             ],
             'terms' => [
                 'uk-filter'
@@ -113,12 +112,9 @@ class CssProcessor implements ProcessorInterface
         ],
         'uk-lightbox' => [
             'paths' => [
-                'app/design/frontend/Mage-OS/UIkit/web/js/uikit/components/internal/lightbox-animations.js',
-                'app/design/frontend/Mage-OS/UIkit/web/js/uikit/components/lightbox.js',
-                'app/design/frontend/Mage-OS/UIkit/web/js/uikit/components/lightbox-panel.js',
-                'vendor/mage-os/theme-frontend-uikit/web/js/uikit/components/internal/lightbox-animations.js',
-                'vendor/mage-os/theme-frontend-uikit/web/js/uikit/components/lightbox.js',
-                'vendor/mage-os/theme-frontend-uikit/web/js/uikit/components/lightbox-panel.js',
+                'web/js/uikit/components/internal/lightbox-animations.js',
+                'web/js/uikit/components/lightbox.js',
+                'web/js/uikit/components/lightbox-panel.js',
             ]
         ],
         'uk-modal' => [
@@ -141,8 +137,7 @@ class CssProcessor implements ProcessorInterface
         ],
         'uk-notification' => [
             'paths' => [
-                'app/design/frontend/Mage-OS/UIkit/web/js/uikit/components/notification.js',
-                'vendor/mage-os/theme-frontend-uikit/web/js/uikit/components/notification.js',
+                'web/js/uikit/components/notification.js',
             ]
         ],
         'uk-offcanvas' => [
@@ -154,8 +149,7 @@ class CssProcessor implements ProcessorInterface
         ],
         'uk-parallax' => [
             'paths' => [
-                'app/design/frontend/Mage-OS/UIkit/web/js/uikit/components/parallax.js',
-                'vendor/mage-os/theme-frontend-uikit/web/js/uikit/components/parallax.js',
+                'web/js/uikit/components/parallax.js',
             ]
         ],
         'uk-scrollspy' => [
@@ -179,28 +173,21 @@ class CssProcessor implements ProcessorInterface
         ],
         'uk-slider' => [
             'paths' => [
-                'app/design/frontend/Mage-OS/UIkit/web/js/uikit/components/slider.js',
-                'app/design/frontend/Mage-OS/UIkit/web/js/uikit/components/slider-parallax.js',
-                'app/design/theme-frontend-uikit/web/js/uikit/components/internal/slider-preload.js',
-                'app/design/theme-frontend-uikit/web/js/uikit/components/internal/slider-transitioner.js',
-                'vendor/mage-os/theme-frontend-uikit/web/js/uikit/components/slider.js',
-                'vendor/mage-os/theme-frontend-uikit/web/js/uikit/components/slider-parallax.js',
-                'vendor/mage-os/theme-frontend-uikit/web/js/uikit/components/internal/slider-preload.js',
-                'vendor/mage-os/theme-frontend-uikit/web/js/uikit/components/internal/slider-transitioner.js',
+                'web/js/uikit/components/slider.js',
+                'web/js/uikit/components/slider-parallax.js',
+                'web/js/uikit/components/internal/slider-preload.js',
+                'web/js/uikit/components/internal/slider-transitioner.js',
             ]
         ],
         'uk-slideshow' => [
             'paths' => [
-                'app/design/frontend/Mage-OS/UIkit/web/js/uikit/components/slideshow.js',
-                'app/design/frontend/Mage-OS/UIkit/web/js/uikit/components/internal/slideshow-animations.js',
-                'vendor/mage-os/theme-frontend-uikit/web/js/uikit/components/slideshow.js',
-                'vendor/mage-os/theme-frontend-uikit/web/js/uikit/components/internal/slideshow-animations.js',
+                'web/js/uikit/components/slideshow.js',
+                'web/js/uikit/components/internal/slideshow-animations.js',
             ]
         ],
         'uk-sortable' => [
             'paths' => [
-                'app/design/frontend/Mage-OS/UIkit/web/js/uikit/components/sortable.js',
-                'vendor/mage-os/theme-frontend-uikit/web/js/uikit/components/sortable.js',
+                'web/js/uikit/components/sortable.js',
             ]
         ],
         'uk-spinner' => [
@@ -227,8 +214,7 @@ class CssProcessor implements ProcessorInterface
         ],
         'uk-tooltip' => [
             'paths' => [
-                'app/design/frontend/Mage-OS/UIkit/web/js/uikit/components/tooltip.js',
-                'vendor/mage-os/theme-frontend-uikit/web/js/uikit/components/tooltip.js',
+                'web/js/uikit/components/tooltip.js'
             ],
             'terms' => [
                 'uk-tooltip'
@@ -236,8 +222,7 @@ class CssProcessor implements ProcessorInterface
         ],
         'uk-upload' => [
             'paths' => [
-                'app/design/frontend/Mage-OS/UIkit/web/js/uikit/components/upload.js',
-                'vendor/mage-os/theme-frontend-uikit/web/js/uikit/components/upload.js',
+                'web/js/uikit/components/upload.js'
             ]
         ]
     ];
@@ -258,19 +243,35 @@ class CssProcessor implements ProcessorInterface
     private UIkitWhitelist $uikitWhitelist;
 
     /**
+     * @var ThemeCollectionFactory
+     */
+    private ThemeCollectionFactory $themeCollectionFactory;
+
+    /**
+     * @var ThemeResolver
+     */
+    private ThemeResolver $themeResolver;
+
+    /**
      * @param DirectoryList $directoryList
      * @param File $file
      * @param UIkitWhitelist $uikitWhitelist
+     * @param ThemeCollectionFactory $themeCollectionFactory
+     * @param ThemeResolver $themeResolver
      */
     public function __construct(
         DirectoryList $directoryList,
         File $file,
-        UIkitWhitelist $uikitWhitelist
+        UIkitWhitelist $uikitWhitelist,
+        ThemeCollectionFactory $themeCollectionFactory,
+        ThemeResolver $themeResolver
     )
     {
         $this->directoryList = $directoryList;
         $this->file = $file;
         $this->uikitWhitelist = $uikitWhitelist;
+        $this->themeCollectionFactory = $themeCollectionFactory;
+        $this->themeResolver = $themeResolver;
     }
 
     /**
@@ -298,6 +299,22 @@ class CssProcessor implements ProcessorInterface
                 }
             }
         }
+        $uikitBasedThemes = $this->getUIkitBasedThemesPaths($root);
+        foreach ($uikitBasedThemes as $themePath) {
+            if (
+                str_contains($themePath, $this->themeResolver::UIKIT_THEME_COMPOSER_PATH) ||
+                str_contains($themePath, $this->themeResolver::UIKIT_THEME_CODE)
+            ) {
+                foreach ($this->componentsWhitelist as $ukAttribute => $data) {
+                    if (isset($data['paths'])) {
+                        foreach ($data['paths'] as $index => $path) {
+                            $this->componentsWhitelist[$ukAttribute]['paths'][$index] = $themePath . $path;
+                        }
+                    }
+                }
+            }
+        }
+        $templateDirs = array_merge($templateDirs, $uikitBasedThemes);
         $usedClasses = array_merge($usedClasses, $this->extractUsedClasses($templateDirs));
         foreach ($usedClasses as $key => $class) {
             if (str_contains($class, '@')) {
@@ -385,6 +402,20 @@ class CssProcessor implements ProcessorInterface
            }
         }
         return array_keys($found);
+    }
+
+    private function getUIkitBasedThemesPaths($root) {
+        $paths = [];
+        foreach ($this->themeResolver->getThemeList($this->themeCollectionFactory->create()->getItems()) as $theme) {
+            if ($theme->getData('is_uikit')) {
+                $path = $root . '/app/design/frontend/' . $theme->getThemePath() . '/';
+                if (!file_exists($path)) {
+                    $path = $root . '/vendor/' . $theme->getThemePackageCode() . '/' . $theme->getThemeCode() . '/';
+                }
+                $paths[] = $path;
+            }
+        }
+        return $paths;
     }
 
     /**

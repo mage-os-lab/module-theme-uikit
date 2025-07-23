@@ -11,12 +11,20 @@ class SchemaLocator implements \Magento\Framework\Config\SchemaLocatorInterface
     protected ?string $_schema = null;
 
     /**
+     * Path to corresponding XSD file with validation rules for merged config
+     *
+     * @var ?string
+     */
+    protected ?string $_perFileSchema = null;
+
+    /**
      * @param \Magento\Framework\Module\Dir\Reader $moduleReader
      */
     public function __construct(\Magento\Framework\Module\Dir\Reader $moduleReader)
     {
         $etcDir = $moduleReader->getModuleDir(\Magento\Framework\Module\Dir::MODULE_ETC_DIR, 'MageOS_UIkitTheme');
         $this->_schema = $etcDir . '/uikit_whitelist.xsd';
+        $this->_perFileSchema = $etcDir . '/uikit_whitelist.xsd';
     }
 
     /**
@@ -34,6 +42,6 @@ class SchemaLocator implements \Magento\Framework\Config\SchemaLocatorInterface
      */
     public function getPerFileSchema()
     {
-        return null;
+        return $this->_perFileSchema;
     }
 }

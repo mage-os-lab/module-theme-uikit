@@ -1,44 +1,43 @@
-<?xml version="1.0"?>
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns="urn:magento:module:MageOS_UIkitTheme:etc/uikit_whitelist.xsd"
-            targetNamespace="urn:magento:module:MageOS_UIkitTheme:etc/uikit_whitelist.xsd"
-            elementFormDefault="qualified">
-    <xsd:element name="config">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element name="paths">
-                    <xsd:complexType>
-                        <xsd:sequence>
-                            <xsd:element name="path" maxOccurs="unbounded">
-                                <xsd:complexType>
-                                    <xsd:simpleContent>
-                                        <xsd:extension base="xsd:string">
-                                            <xsd:attribute name="name" type="xsd:string" use="required"/>
-                                            <xsd:attribute name="type" type="xsd:string" use="required"/>
-                                        </xsd:extension>
-                                    </xsd:simpleContent>
-                                </xsd:complexType>
-                            </xsd:element>
-                        </xsd:sequence>
-                    </xsd:complexType>
-                </xsd:element>
-                <xsd:element name="terms">
-                    <xsd:complexType>
-                        <xsd:sequence>
-                            <xsd:element name="term" maxOccurs="unbounded">
-                                <xsd:complexType>
-                                    <xsd:simpleContent>
-                                        <xsd:extension base="xsd:string">
-                                            <xsd:attribute name="name" type="xsd:string" use="required"/>
-                                            <xsd:attribute name="type" type="xsd:string" use="required"/>
-                                        </xsd:extension>
-                                    </xsd:simpleContent>
-                                </xsd:complexType>
-                            </xsd:element>
-                        </xsd:sequence>
-                    </xsd:complexType>
-                </xsd:element>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
-</xsd:schema>
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:complexType name="namedType" abstract="true" mixed="true">
+        <xs:attribute name="name" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="complexType" mixed="true">
+        <xs:complexContent>
+            <xs:extension base="namedType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:annotation>
+        <xs:documentation>Contains uikit whitelist.</xs:documentation>
+    </xs:annotation>
+
+    <xs:element name="config" type="safelistType" />
+
+    <xs:complexType name="safelistType">
+        <xs:annotation>
+            <xs:documentation>Definition of safelist.</xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="paths" type="pathsType" minOccurs="0"/>
+            <xs:element name="terms" type="termsType" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="termsType">
+        <xs:sequence>
+            <xs:element name="term" type="xs:string" maxOccurs="unbounded" minOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="pathsType">
+        <xs:sequence>
+            <xs:element name="path" type="xs:string" maxOccurs="unbounded" minOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

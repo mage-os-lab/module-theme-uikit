@@ -52,7 +52,7 @@ class Preload extends \Magento\Framework\View\Element\AbstractBlock
                 $attributesHtml .= sprintf('%s="%s"', $asset['crossorigin']['name'], $asset['crossorigin']['value']);
             }
             if (!empty($asset['as'])) {
-                $attributesHtml .= sprintf('%s="%s"', $asset['attribute']['name'], $asset['attribute']['value']);
+                $attributesHtml .= sprintf('%s="%s"', $asset['as']['name'], $asset['as']['value']);
             }
             $assetUrl = $this->_assetRepo->getUrl($asset['path']);
             $html .= $this->renderLinkTemplate($assetUrl, $attributesHtml);

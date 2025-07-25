@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 1.4.1
+### Fixed
+- Fix minor error on css parsing. Previously was keeping all rule's selectors if at least one wasn't containing .uk-' prefixed classes.   
 
 ## 1.4.0
 ### Fixed

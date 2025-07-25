@@ -482,7 +482,7 @@ class CssProcessor implements ProcessorInterface
                             }
                         }
                     } else {
-                        $selectorsToKeep = $selectors;
+                        $selectorsToKeep[] = $sel;
                         $keepRule = true;
                     }
                 }

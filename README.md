@@ -55,7 +55,7 @@ Use "head.asset.preload" layout block to preload fonts and assets inside default
 To compile UIkit css classes inside the css files you need to specify file paths to scan into uikit_whitelist.xml files:
 ```
 <?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:MageOS_Theme:etc/uikit_whitelist.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:MageOS_UIkitTheme:etc/uikit_whitelist.xsd">
     <paths>
         <path name="mage-os_app" xsi:type="string" >app/design/frontend/Mage-OS/UIkit</path>
         <path name="mage-os_vendor" xsi:type="string" >vendor/mage-os/theme-frontend-uikit</path>
@@ -65,7 +65,7 @@ To compile UIkit css classes inside the css files you need to specify file paths
 Or compile a safelist of classes if any phtml/html/xml file expose them
 ```
 <?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:MageOS_Theme:etc/uikit_whitelist.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:MageOS_UIkitTheme:etc/uikit_whitelist.xsd">
     <terms>
         <term name="button" xsi:type="string" >uk-button</term>
         <term name="button-primary" xsi:type="string" >uk-button-primary</term>

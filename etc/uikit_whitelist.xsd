@@ -2,16 +2,6 @@
 
 <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-    <xs:complexType name="namedType" abstract="true" mixed="true">
-        <xs:attribute name="name" use="required"/>
-    </xs:complexType>
-
-    <xs:complexType name="complexType" mixed="true">
-        <xs:complexContent>
-            <xs:extension base="namedType"/>
-        </xs:complexContent>
-    </xs:complexType>
-
     <xs:annotation>
         <xs:documentation>Contains uikit whitelist.</xs:documentation>
     </xs:annotation>
@@ -30,14 +20,34 @@
 
     <xs:complexType name="termsType">
         <xs:sequence>
-            <xs:element name="term" type="xs:string" maxOccurs="unbounded" minOccurs="1" />
+            <xs:element name="term" type="string" maxOccurs="unbounded" minOccurs="0" />
         </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="pathsType">
         <xs:sequence>
-            <xs:element name="path" type="xs:string" maxOccurs="unbounded" minOccurs="1" />
+            <xs:element name="path" type="string" maxOccurs="unbounded" minOccurs="0" />
         </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="namedType" abstract="true" mixed="true">
+        <xs:attribute name="name" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="simpleType" mixed="true">
+        <xs:complexContent>
+            <xs:extension base="namedType">
+                <xs:sequence>
+                    <xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="string" mixed="true">
+        <xs:complexContent>
+            <xs:extension base="simpleType"/>
+        </xs:complexContent>
     </xs:complexType>
 
 </xs:schema>

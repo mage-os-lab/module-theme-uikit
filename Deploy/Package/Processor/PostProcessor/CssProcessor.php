@@ -304,7 +304,14 @@ class CssProcessor implements ProcessorInterface
             }
             if ($key === "terms") {
                 foreach($configData as $name => $term) {
-                    $usedClasses[] = $term;
+                    if (strpos($term, " ") !== false) {
+                        $termsList = explode(" ", $term);
+                        foreach ($termsList as $term) {
+                            $usedClasses[] = $term;
+                        }
+                    } else {
+                        $usedClasses[] = $term;
+                    }
                 }
             }
         }
@@ -325,6 +332,7 @@ class CssProcessor implements ProcessorInterface
         }
         $templateDirs = array_merge($templateDirs, $uikitBasedThemes);
         $usedClasses = array_merge($usedClasses, $this->extractUsedClasses($templateDirs));
+        //dd(in_array('uk-overlay', $usedClasses), in_array('uk-overlay-primary', $usedClasses), in_array('uk-transition-slide-left', $usedClasses), in_array('uk-flex-column', $usedClasses));
         foreach ($usedClasses as $key => $class) {
             if (str_contains($class, '@')) {
                 $usedClasses[$key] = substr($class, 0, strpos($class, '@'));
@@ -363,7 +371,24 @@ class CssProcessor implements ProcessorInterface
                     foreach ($m[1] as $list) {
                         foreach (preg_split('/\s+/', $list) as $cls) {
                             if (str_starts_with($cls, 'uk-')) {
-                                $found[$cls] = true;
+                                if (strpos($cls, "{") === false) {
+                                    $found[$cls] = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (preg_match_all('/resolveExpression\(\s*\[\s*((?:(?:(["\']).*?\2)\s*,?\s*)+)\]/s', $content, $matches)) {
+                    foreach ($matches[1] as $inner) {
+                        if (preg_match_all('/["\']([^"\']+)["\']/', $inner, $innerMatches)) {
+                            foreach ($innerMatches[1] as $classList) {
+                                foreach (preg_split('/\s+/', $classList) as $cls) {
+                                    if (str_starts_with($cls, 'uk-')) {
+                                        if (strpos($cls, "{") === false) {
+                                            $found[$cls] = true;
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

@@ -332,7 +332,6 @@ class CssProcessor implements ProcessorInterface
         }
         $templateDirs = array_merge($templateDirs, $uikitBasedThemes);
         $usedClasses = array_merge($usedClasses, $this->extractUsedClasses($templateDirs));
-        //dd(in_array('uk-overlay', $usedClasses), in_array('uk-overlay-primary', $usedClasses), in_array('uk-transition-slide-left', $usedClasses), in_array('uk-flex-column', $usedClasses));
         foreach ($usedClasses as $key => $class) {
             if (str_contains($class, '@')) {
                 $usedClasses[$key] = substr($class, 0, strpos($class, '@'));

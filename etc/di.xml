@@ -2,7 +2,10 @@
 
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <type name="Magento\Deploy\Service\DeployPackage">
-        <plugin name="mageos_deploy_svg_assets_for_compilation" type="MageOS\UIkitTheme\Plugin\Framework\Deploy\InsertSvgAssetsOnStaticFilesCompilation" sortOrder="1" />
+        <plugin name="mageos_deploy_svg_assets_static_compilation" type="MageOS\UIkitTheme\Plugin\Framework\Deploy\InsertSvgAssetsOnStaticFilesCompilation" sortOrder="1" />
+    </type>
+    <type name="Magento\Framework\App\StaticResource">
+        <plugin name="mageos_deploy_svg_assets_frontend_compilation" type="MageOS\UIkitTheme\Plugin\Framework\Deploy\InsertSvgAssetsOnStaticFilesClientFrontendCompilation" sortOrder="1" />
     </type>
     <type name="Magento\Deploy\Package\Package">
         <arguments>
